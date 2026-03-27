@@ -4,7 +4,6 @@ from src.extraction.extractor import extract_invention
 from src.retrieval.retriever import retrieve_prior_art
 from src.mapping.mapper import map_claims
 
-
 def test_mapper():
     """Test the full Extract → Retrieve → Map pipeline."""
 
@@ -43,7 +42,6 @@ def test_mapper():
         print(f"     Status: {em['status']}")
         print(f"     Evidence: {em['evidence'][:100]}...")
         print(f"     Explanation: {em['explanation']}")
-
 
 if __name__ == "__main__":
     test_mapper()

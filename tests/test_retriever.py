@@ -3,7 +3,6 @@ from src.ingestion.patent_parser import parse_patent
 from src.extraction.extractor import extract_invention
 from src.retrieval.retriever import retrieve_prior_art
 
-
 def test_retriever():
     """Test the full Extract → Retrieve pipeline."""
 
@@ -30,7 +29,6 @@ def test_retriever():
     print(f"\n Retrieved {len(results)} results:")
     for r in results:
         print(f"  [{r['score']}] {r['patent_number']} — {r['section']} {r['claim_number']}")
-
 
 if __name__ == "__main__":
     test_retriever()

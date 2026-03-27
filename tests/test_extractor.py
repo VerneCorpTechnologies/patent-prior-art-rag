@@ -2,7 +2,6 @@ from src.ingestion.epo_client import fetch_patent
 from src.ingestion.patent_parser import parse_patent
 from src.extraction.extractor import extract_invention
 
-
 def test_extract_invention():
     """Test invention extraction on a real patent."""
     raw = fetch_patent("EP1000000")
@@ -25,7 +24,6 @@ def test_extract_invention():
     for i, el in enumerate(extraction['elements'], 1):
         print(f"  {i}. {el}")
     print(f"\n PROBLEM:\n{extraction['problem']}")
-
 
 if __name__ == "__main__":
     test_extract_invention()
