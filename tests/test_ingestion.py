@@ -10,12 +10,12 @@ def test_ingest_patent():
     ingest_patent(patent_number)
 
     # Wait briefly for Pinecone to index the vectors
-    print("\n  Waiting for Pinecone to index...")
+    print("\n Waiting for Pinecone to index...")
     time.sleep(5)
 
     # Verify it landed in Pinecone
     assert patent_exists(patent_number), "Patent not found in Pinecone after ingestion"
-    print(f"\n✅ {patent_number} confirmed in Pinecone")
+    print(f"\n {patent_number} confirmed in Pinecone")
 
 
 if __name__ == "__main__":

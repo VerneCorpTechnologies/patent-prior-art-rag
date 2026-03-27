@@ -19,12 +19,12 @@ def test_extract_invention():
 
     extraction = extract_invention(patent_text)
 
-    print(f"\n✅ Extraction successful")
-    print(f"\nCONCEPT:\n{extraction['concept']}")
-    print(f"\nELEMENTS:")
+    print(f"\n Extraction successful")
+    print(f"\n CONCEPT:\n{extraction['concept']}")
+    print(f"\n ELEMENTS:")
     for i, el in enumerate(extraction['elements'], 1):
         print(f"  {i}. {el}")
-    print(f"\nPROBLEM:\n{extraction['problem']}")
+    print(f"\n PROBLEM:\n{extraction['problem']}")
 
 
 if __name__ == "__main__":

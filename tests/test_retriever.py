@@ -20,14 +20,14 @@ def test_retriever():
     """
 
     # Extract
-    print("\n🔬 Extracting inventive concept...")
+    print("\n Extracting inventive concept...")
     extraction = extract_invention(patent_text)
     print(f"  Concept: {extraction['concept'][:100]}...")
 
     # Retrieve
     results = retrieve_prior_art(extraction, max_results=5)
 
-    print(f"\n✅ Retrieved {len(results)} results:")
+    print(f"\n Retrieved {len(results)} results:")
     for r in results:
         print(f"  [{r['score']}] {r['patent_number']} — {r['section']} {r['claim_number']}")
 

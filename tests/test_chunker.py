@@ -9,12 +9,12 @@ def test_chunker():
     parsed = parse_patent(raw)
     chunks = chunk_patent(parsed)
 
-    print(f"\n✅ Total chunks: {len(chunks)}")
+    print(f"\n Total chunks: {len(chunks)}")
 
     for chunk in chunks:
-        print(f"\n  [{chunk.section.upper()}] {chunk.chunk_id}")
-        print(f"  Text ({len(chunk.text)} chars): {chunk.text[:100]}...")
-        print(f"  Metadata: {chunk.metadata}")
+        print(f"\n [{chunk.section.upper()}] {chunk.chunk_id}")
+        print(f"Text ({len(chunk.text)} chars): {chunk.text[:100]}...")
+        print(f"Metadata: {chunk.metadata}")
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ def store_chunks(chunks: list[PatentChunk]) -> None:
         vectors.append({
             "id": chunk.chunk_id,
             "values": embedding,
-            "metadata": chunk.metadata
+            "metadata": {**chunk.metadata, "text": chunk.text[:1000]}
         })
 
     # Upsert in batches of 100
@@ -38,7 +38,7 @@ def store_chunks(chunks: list[PatentChunk]) -> None:
     for i in range(0, len(vectors), batch_size):
         batch = vectors[i:i + batch_size]
         index.upsert(vectors=batch)
-        print(f"  ✅ Upserted batch of {len(batch)} vectors")
+        print(f" Upserted batch of {len(batch)} vectors")
 
 
 def patent_exists(patent_number: str) -> bool:

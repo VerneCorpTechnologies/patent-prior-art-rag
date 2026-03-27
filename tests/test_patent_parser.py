@@ -7,12 +7,12 @@ def test_parse_patent():
     raw = fetch_patent("EP1000000")
     parsed = parse_patent(raw)
 
-    print(f"\n✅ Patent number: {parsed.patent_number}")
-    print(f"✅ Abstract ({len(parsed.abstract)} chars): {parsed.abstract[:200]}...")
-    print(f"✅ Claims found: {len(parsed.claims)}")
+    print(f"\n Patent number: {parsed.patent_number}")
+    print(f" Abstract ({len(parsed.abstract)} chars): {parsed.abstract[:200]}...")
+    print(f" Claims found: {len(parsed.claims)}")
     for i, claim in enumerate(parsed.claims[:3], 1):
         print(f"   Claim {i}: {claim[:150]}...")
-    print(f"✅ Description ({len(parsed.description)} chars)")
+    print(f" Description ({len(parsed.description)} chars)")
 
 
 if __name__ == "__main__":

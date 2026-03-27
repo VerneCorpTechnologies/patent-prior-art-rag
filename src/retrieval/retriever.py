@@ -60,7 +60,8 @@ def retrieve_prior_art(extracted_concept: dict, max_results: int = 5) -> list[di
             "section": match.metadata.get("section"),
             "claim_number": match.metadata.get("claim_number"),
             "score": round(match.score, 3),
-            "chunk_id": match.metadata.get("chunk_id")
+            "chunk_id": match.metadata.get("chunk_id"),
+            "text": match.metadata.get("text", "")
         })
 
     return matches

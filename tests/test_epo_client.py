@@ -5,7 +5,7 @@ def test_authentication():
     token = get_access_token()
     assert token is not None
     assert len(token) > 0
-    print(f"\n✅ Authentication successful. Token: {token[:20]}...")
+    print(f"\n Authentication successful. Token: {token[:20]}...")
 
 def test_fetch_patent():
     """Test fetching a real patent."""
@@ -13,7 +13,7 @@ def test_fetch_patent():
     patent = fetch_patent("EP1000000")
     assert patent["patent_number"] == "EP1000000"
     assert patent["abstract"] is not None
-    print(f"\n✅ Patent fetched successfully")
+    print(f"\n Patent fetched successfully")
     print(f"Abstract preview: {patent['abstract'][:200]}...")
 
 if __name__ == "__main__":
