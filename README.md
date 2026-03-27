@@ -1,4 +1,4 @@
-# ⚖️ Patent Prior Art Search
+# Patent Prior Art Search
 ### Invention Extraction · Prior Art Retrieval · Claim Mapping
 
 A production-grade RAG system that automates patent prior art search before filing. A patent attorney inputs a patent application; the system extracts the core inventive concept in plain English, searches the EPO database for semantically similar prior art, and produces an element-by-element claim mapping with colour-coded novelty assessment.
@@ -7,7 +7,7 @@ Built to reduce the cost and time of pre-filing patent searches — helping atto
 
 ---
 
-## 🎯 The Problem
+## The Problem
 
 Patent claims are deliberately written in broad, abstract legal language that obscures the core inventive concept. Comparing two patents manually requires an attorney to mentally extract the essence of both — a slow, expensive, and cognitively demanding process.
 
@@ -23,7 +23,7 @@ EXTRACT  →  RETRIEVE  →  MAP
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Streamlit UI (Streamlit Community Cloud)
@@ -51,7 +51,7 @@ AWS API Gateway → AWS Lambda (FastAPI + Mangum)
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Technology |
 |---|---|
@@ -69,7 +69,7 @@ AWS API Gateway → AWS Lambda (FastAPI + Mangum)
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 patent-prior-art-rag/
@@ -110,7 +110,7 @@ patent-prior-art-rag/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -155,7 +155,7 @@ PYTHONPATH=. streamlit run src/ui/app.py
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 Run individual tests:
 
@@ -181,7 +181,7 @@ PYTHONPATH=. python3 tests/test_evaluator.py
 
 ---
 
-## 💡 How It Works
+## How It Works
 
 ### Step 1 — Extract
 The attorney enters a patent number or pastes patent text. Amazon Nova Pro extracts:
@@ -201,23 +201,7 @@ For each retrieved prior art patent, Nova Pro produces:
 - Evidence quotes from the prior art
 - Colour-coded novelty status per element: 🔴 Prior Art / 🟡 Ambiguous / 🟢 Novel
 - Overall risk assessment: High / Medium / Low
-
----
-
-## 📊 Interview Talking Points
-
-**Why concept-first retrieval?**
-Raw patent claim text is deliberately broad and abstract — optimised for legal protection, not semantic clarity. Retrieving on the extracted concept finds patents that describe similar inventions even when the legal language is completely different.
-
-**Why structure-aware chunking?**
-A naive text splitter would cut mid-claim, destroying the semantic integrity of patent claims. Each claim is kept as an atomic unit — this was the single biggest driver of retrieval quality improvement measured by RAGAS Context Precision.
-
-**Why Lambda over ECS?**
-For a system handling occasional requests rather than continuous traffic, serverless is the right architectural choice. No idle server costs, automatic scaling, and the same IAM-based security model. A move to ECS would be warranted at sustained high request volumes.
-
-**Why Pinecone over ChromaDB?**
-ChromaDB requires persistent disk storage — incompatible with Lambda's stateless execution model. Pinecone is a managed serverless vector store called via API, which fits Lambda perfectly.
-
+  
 ---
 
 ## 👤 Author
