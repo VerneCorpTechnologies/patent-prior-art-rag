@@ -9,6 +9,7 @@ from src.ingestion.patent_parser import parse_patent
 from src.extraction.extractor import extract_invention
 from src.retrieval.retriever import retrieve_prior_art
 from src.mapping.mapper import map_claims
+from src.ingestion.pdf_parser import extract_text_from_pdf
 
 # ── Page config ───────────────────────────────────────────────
 st.set_page_config(
@@ -43,7 +44,6 @@ if "retrieval_results" not in st.session_state:
 if "mappings" not in st.session_state:
     st.session_state.mappings = {}
 
-
 # ══════════════════════════════════════════════════════════════
 # PANEL 1 — INPUT & EXTRACTION
 # ══════════════════════════════════════════════════════════════
@@ -51,7 +51,7 @@ st.subheader("📄 Your Invention")
 
 input_method = st.radio(
     "Input method",
-    ["Enter patent number", "Paste patent text"],
+    ["Enter patent number", "Upload PDF"],
     horizontal=True
 )
 
@@ -75,13 +75,33 @@ if input_method == "Enter patent number":
 CLAIMS:
 {chr(10).join(parsed.claims)}"""
                     st.session_state.fetched_text = patent_text_input
-                    st.success(f"Fetched {patent_number} — {len(parsed.claims)} claims found")
+                    st.success(f"✅ Fetched {patent_number} — {len(parsed.claims)} claims found")
                 except Exception as e:
                     st.error(f"Could not fetch patent: {e}")
 
-    if "fetched_text" in st.session_state:
-        with st.expander("View fetched patent text"):
+    if "fetched_text" in st.session_state and input_method == "Enter patent number":
+        with st.expander("Preview fetched patent text"):
             st.text(st.session_state.fetched_text[:2000])
+        patent_text_input = st.session_state.fetched_text
+
+elif input_method == "Upload PDF":
+    uploaded_file = st.file_uploader(
+        "Upload your patent application",
+        type=["pdf"],
+        help="Upload a PDF of the patent application or invention disclosure"
+    )
+    if uploaded_file:
+        with st.spinner("Extracting text from PDF..."):
+            try:
+                pdf_text = extract_text_from_pdf(uploaded_file.read())
+                st.session_state.fetched_text = pdf_text
+                st.success(f"✅ PDF extracted — {len(pdf_text)} characters")
+                with st.expander("Preview extracted text"):
+                    st.text(pdf_text[:2000])
+            except ValueError as e:
+                st.error(str(e))
+
+    if "fetched_text" in st.session_state and input_method == "Upload PDF":
         patent_text_input = st.session_state.fetched_text
 
 else:
