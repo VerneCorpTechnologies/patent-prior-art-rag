@@ -3,12 +3,12 @@ langchain
 langchain-aws
 langchain-pinecone
 pinecone
-ragas
-datasets
 fastapi
 mangum
-streamlit
 requests
 python-dotenv
 pypdf
 pydantic
+ragas
+datasets
+streamlit
