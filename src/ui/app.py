@@ -7,10 +7,10 @@ from src.ingestion.pdf_parser import extract_text_from_pdf
 load_dotenv()
 
 # ── API Configuration ─────────────────────────────────────────
-API_BASE_URL = os.getenv("API_BASE_URL")
+API_BASE_URL = st.secrets.get("API_BASE_URL") or os.getenv("API_BASE_URL")
 
 if not API_BASE_URL:
-    st.error("API_BASE_URL environment variable not set.")
+    st.error("API_BASE_URL not configured.")
     st.stop()
 
 # ── API Calls ─────────────────────────────────────────────────
