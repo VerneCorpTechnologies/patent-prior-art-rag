@@ -1,15 +1,53 @@
 import streamlit as st
-import sys
+import requests
 import os
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
-from src.ingestion.epo_client import fetch_patent
-from src.ingestion.patent_parser import parse_patent
-from src.extraction.extractor import extract_invention
-from src.retrieval.retriever import retrieve_prior_art
-from src.mapping.mapper import map_claims
+from dotenv import load_dotenv
 from src.ingestion.pdf_parser import extract_text_from_pdf
+
+load_dotenv()
+
+# ── API Configuration ─────────────────────────────────────────
+API_BASE_URL = os.getenv("API_BASE_URL")
+
+if not API_BASE_URL:
+    st.error("API_BASE_URL environment variable not set.")
+    st.stop()
+
+# ── API Calls ─────────────────────────────────────────────────
+def api_extract(patent_text: str) -> dict:
+    """Call the extract endpoint."""
+    response = requests.post(
+        f"{API_BASE_URL}/extract",
+        json={"patent_text": patent_text},
+        timeout=120
+    )
+    response.raise_for_status()
+    return response.json()["extraction"]
+
+
+def api_retrieve(extraction: dict, max_results: int) -> list:
+    """Call the retrieve endpoint."""
+    response = requests.post(
+        f"{API_BASE_URL}/retrieve",
+        json={"extraction": extraction, "max_results": max_results},
+        timeout=120
+    )
+    response.raise_for_status()
+    return response.json()["results"]
+
+def api_map(extraction: dict, prior_art_number: str, chunks: list) -> dict:
+    """Call the map endpoint."""
+    response = requests.post(
+        f"{API_BASE_URL}/map",
+        json={
+            "extraction": extraction,
+            "prior_art_number": prior_art_number,
+            "prior_art_chunks": chunks
+        },
+        timeout=120
+    )
+    response.raise_for_status()
+    return response.json()["mapping"]
 
 # ── Page config ───────────────────────────────────────────────
 st.set_page_config(
@@ -47,12 +85,13 @@ if "mappings" not in st.session_state:
 # ══════════════════════════════════════════════════════════════
 # PANEL 1 — INPUT & EXTRACTION
 # ══════════════════════════════════════════════════════════════
-st.subheader("📄 Your Invention")
+st.subheader("📄 Patent Specification")
 
 input_method = st.radio(
-    "Input method",
-    ["Enter patent number", "Upload PDF"],
-    horizontal=True
+    "Select an input method",
+    "Upload your patent specification",
+    horizontal=True,
+    label_visibility="collapsed"
 )
 
 patent_text_input = ""
@@ -84,9 +123,9 @@ CLAIMS:
             st.text(st.session_state.fetched_text[:2000])
         patent_text_input = st.session_state.fetched_text
 
-elif input_method == "Upload PDF":
+elif input_method == "Upload your patent specification":
     uploaded_file = st.file_uploader(
-        "Upload your patent application",
+        "Allowed formats: PDF",
         type=["pdf"],
         help="Upload a PDF of the patent application or invention disclosure"
     )
@@ -101,7 +140,7 @@ elif input_method == "Upload PDF":
             except ValueError as e:
                 st.error(str(e))
 
-    if "fetched_text" in st.session_state and input_method == "Upload PDF":
+    if "fetched_text" in st.session_state and input_method == "Upload your patent specification":
         patent_text_input = st.session_state.fetched_text
 
 else:
@@ -115,7 +154,7 @@ else:
 if patent_text_input and st.button("🔬 Extract Inventive Concept", type="primary"):
     with st.spinner("Extracting inventive concept with Nova Pro..."):
         try:
-            st.session_state.extraction = extract_invention(patent_text_input)
+            st.session_state.extraction = api_extract(patent_text_input)
             st.session_state.retrieval_results = None
             st.session_state.mappings = {}
         except Exception as e:
@@ -143,14 +182,14 @@ if st.session_state.extraction:
     # ══════════════════════════════════════════════════════════
     # PANEL 2 — RETRIEVAL
     # ══════════════════════════════════════════════════════════
-    st.subheader("🔍 Panel 2 — Prior Art Results")
+    st.subheader("🔍 Prior Art Results")
 
     num_results = st.slider("Number of prior art patents to retrieve", 1, 10, 5)
 
     if st.button("🔍 Search Prior Art", type="primary"):
         with st.spinner("Searching EPO database and ingesting candidates..."):
             try:
-                st.session_state.retrieval_results = retrieve_prior_art(
+                st.session_state.retrieval_results = api_retrieve(
                     st.session_state.extraction,
                     max_results=num_results
                 )
@@ -182,7 +221,7 @@ if st.session_state.extraction:
         # ══════════════════════════════════════════════════════
         # PANEL 3 — CLAIM MAPPING
         # ══════════════════════════════════════════════════════
-        st.subheader("🗺️ Panel 3 — Claim Mapping")
+        st.subheader("🗺️ Claim Mapping")
 
         if st.button("🗺️ Run Claim Mapping", type="primary"):
             results_by_patent = {}
@@ -195,7 +234,7 @@ if st.session_state.extraction:
             for patent_num, chunks in results_by_patent.items():
                 with st.spinner(f"Mapping claims against {patent_num}..."):
                     try:
-                        mapping = map_claims(
+                        mapping = api_map(
                             st.session_state.extraction,
                             patent_num,
                             chunks

@@ -184,7 +184,7 @@ PYTHONPATH=. python3 tests/test_evaluator.py
 ## How It Works
 
 ### Step 1 — Extract
-The attorney enters a patent number or pastes patent text. Amazon Nova Pro extracts:
+The attorney enters a patent number or uploads a PDF. Amazon Nova Pro extracts:
 - The core inventive concept in 2-3 plain English sentences
 - Key functional elements as a structured list
 - The problem the invention solves
