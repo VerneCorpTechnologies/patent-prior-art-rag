@@ -64,4 +64,4 @@ def map_patent(request: MapRequest):
 
 
 # Lambda handler
-handler = Mangum(app)
+handler = Mangum(app, lifespan="off", api_gateway_base_path="/prod")
