@@ -8,6 +8,7 @@ load_dotenv()
 
 # ── API Configuration ─────────────────────────────────────────
 API_BASE_URL = st.secrets.get("API_BASE_URL") or os.getenv("API_BASE_URL")
+APP_API_KEY = st.secrets.get("APP_API_KEY") or os.getenv("APP_API_KEY")
 
 if not API_BASE_URL:
     st.error("API_BASE_URL not configured.")
@@ -15,10 +16,10 @@ if not API_BASE_URL:
 
 # ── API Calls ─────────────────────────────────────────────────
 def api_extract(patent_text: str) -> dict:
-    """Call the extract endpoint."""
     response = requests.post(
         f"{API_BASE_URL}/extract",
         json={"patent_text": patent_text},
+        headers={"X-API-Key": APP_API_KEY},
         timeout=120
     )
     response.raise_for_status()
@@ -26,17 +27,17 @@ def api_extract(patent_text: str) -> dict:
 
 
 def api_retrieve(extraction: dict, max_results: int) -> list:
-    """Call the retrieve endpoint."""
     response = requests.post(
         f"{API_BASE_URL}/retrieve",
         json={"extraction": extraction, "max_results": max_results},
+        headers={"X-API-Key": APP_API_KEY},
         timeout=120
     )
     response.raise_for_status()
     return response.json()["results"]
 
+
 def api_map(extraction: dict, prior_art_number: str, chunks: list) -> dict:
-    """Call the map endpoint."""
     response = requests.post(
         f"{API_BASE_URL}/map",
         json={
@@ -44,6 +45,7 @@ def api_map(extraction: dict, prior_art_number: str, chunks: list) -> dict:
             "prior_art_number": prior_art_number,
             "prior_art_chunks": chunks
         },
+        headers={"X-API-Key": APP_API_KEY},
         timeout=120
     )
     response.raise_for_status()
