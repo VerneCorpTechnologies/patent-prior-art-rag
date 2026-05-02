@@ -7,7 +7,6 @@ import streamlit as st
 import requests
 from dotenv import load_dotenv
 from ingestion.pdf_parser import extract_text_from_pdf
-from retrieval.retriever import retrieve_prior_art
 
 load_dotenv()
 
