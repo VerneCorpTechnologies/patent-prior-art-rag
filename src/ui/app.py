@@ -1,15 +1,11 @@
-import streamlit as st
 import sys
 import os
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import streamlit as st
 import requests
 from dotenv import load_dotenv
-
-st.write("Current file:", __file__)
-st.write("Sys path:", sys.path)
-st.write("Files in current dir:", os.listdir(os.path.dirname(__file__)))
-st.write("Files in parent dir:", os.listdir(os.path.join(os.path.dirname(__file__), '..')))
-st.stop()
-
 from ingestion.pdf_parser import extract_text_from_pdf
 
 load_dotenv()
