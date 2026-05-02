@@ -25,7 +25,7 @@ def retrieve_prior_art(extracted_concept: dict, max_results: int = 5) -> list[di
     candidate_patents = search_patents(
         concept_text,
         elements=extracted_concept.get("elements", []),
-        max_results=20
+        max_results=10
     )
     print(f"  Found {len(candidate_patents)} candidate patents: {candidate_patents}")
 

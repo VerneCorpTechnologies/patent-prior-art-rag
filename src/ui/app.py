@@ -190,7 +190,7 @@ if st.session_state.extraction:
     # ══════════════════════════════════════════════════════════
     st.subheader("🔍 Prior Art Results")
 
-    num_results = st.slider("Number of prior art patents to retrieve", 1, 10, 5)
+    num_results = st.slider("Number of prior art patents to retrieve", 1, 5, 3)
 
     if st.button("🔍 Search Prior Art", type="primary"):
         with st.spinner("Searching EPO database and ingesting candidates..."):
