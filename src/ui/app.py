@@ -8,6 +8,7 @@ import requests
 from dotenv import load_dotenv
 from ingestion.pdf_parser import extract_text_from_pdf
 
+
 load_dotenv()
 
 # ── API Configuration ─────────────────────────────────────────
@@ -30,25 +31,12 @@ def api_extract(patent_text: str) -> dict:
     return response.json()["extraction"]
 
 
-def api_ingest(extraction: dict, max_results: int) -> dict:
-    """Search EPO and ingest patents into Pinecone"""
-    response = requests.post(
-        f"{API_BASE_URL}/ingest",
-        json={"extraction": extraction, "max_results": max_results},
-        headers={"X-API-Key": APP_API_KEY},
-        timeout=120
-    )
-    response.raise_for_status()
-    return response.json()
-
-
 def api_retrieve(extraction: dict, max_results: int) -> list:
-    """Query Pinecone only"""
     response = requests.post(
         f"{API_BASE_URL}/retrieve",
         json={"extraction": extraction, "max_results": max_results},
         headers={"X-API-Key": APP_API_KEY},
-        timeout=30
+        timeout=120
     )
     response.raise_for_status()
     return response.json()["results"]
@@ -206,25 +194,15 @@ if st.session_state.extraction:
     num_results = st.slider("Number of prior art patents to retrieve", 1, 5, 3)
 
     if st.button("🔍 Search Prior Art", type="primary"):
-        with st.spinner("Searching EPO database and indexing patents — this may take up to 60 seconds on first search..."):
-            try:
-                api_ingest(
-                    st.session_state.extraction,
-                    st.session_state.num_results
-                )
-            except Exception as e:
-                st.session_state.retrieval_error = f"Ingestion failed: {e}"
-
-        with st.spinner("Running semantic search..."):
+        with st.spinner("Searching EPO database and ingesting candidates..."):
             try:
                 st.session_state.retrieval_results = api_retrieve(
                     st.session_state.extraction,
-                    st.session_state.num_results
+                    max_results=num_results
                 )
                 st.session_state.mappings = {}
-                st.session_state.retrieval_error = None
             except Exception as e:
-                st.session_state.retrieval_error = f"Retrieval failed: {e}"
+                st.error(f"Retrieval failed: {e}")
 
     if st.session_state.retrieval_results:
         results = st.session_state.retrieval_results
